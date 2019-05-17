@@ -41,10 +41,9 @@ public class GameController : MonoBehaviour {
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            enemySpeeds = new List<float>();
+            FillEnemySpeeds(enemySpeeds);
         }
-
-        enemySpeeds = new List<float>();
-        FillEnemySpeeds(enemySpeeds);
     }
 
     void FillEnemySpeeds(List<float> speedList)
@@ -57,7 +56,6 @@ public class GameController : MonoBehaviour {
         //for (int i = 0; i <= numLevels; i++)
         //{
         //}
-
 
         ///Temp hardcode of speeds
             
@@ -126,14 +124,18 @@ public class GameController : MonoBehaviour {
 
            if (!livesSetup)
            {
-                for (int i = STARTING_LIVES; i > numLives; i--)
-                {
-                    if (lives[i-1] == null)
-                    {
-                        Debug.Log("This is null");
-                    }
-                    lives[i-1].enabled = false;
-                }
+                /////Set UI to current lives
+
+
+                //     for (int i = STARTING_LIVES; i > numLives; i--)
+                //     {
+                //         if (lives[i-1] == null)
+                //         {
+                //             Debug.Log("This is null");
+                //         }
+                //         lives[i-1].enabled = false;
+                //     }
+                UpdateLiveUI(STARTING_LIVES, lives, numLives);
                 livesSetup = true;
            }
 
@@ -143,6 +145,18 @@ public class GameController : MonoBehaviour {
         }
         
 	}
+
+    void  UpdateLiveUI(int numStartingLives, List<Image> liveUI, int lives)
+    {
+        for (int i = numStartingLives; i > lives; i--)
+        {
+            if (liveUI[i - 1] == null)
+            {
+                Debug.Log("This is null");
+            }
+            liveUI[i - 1].enabled = false;
+        }
+    }
 
     void UpDateScore()
     {
@@ -155,16 +169,21 @@ public class GameController : MonoBehaviour {
         {
             if (numLives > 0)
             {
-                lives[numLives - 1].enabled = false;
                 numLives--;
+                UpdateLiveUI(STARTING_LIVES, lives, numLives);
                 playerStates.isHit = false;
             }
             else 
             {
-                gameOver = true;
-                Instantiate(GameOverObj);
+                EndGame();
             }
         }
+    }
+
+    void EndGame()
+    {
+        gameOver = true;
+        Instantiate(GameOverObj);
     }
 
     void CheckForEndLevel()
